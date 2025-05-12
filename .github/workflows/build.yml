@@ -195,39 +195,6 @@ jobs:
               ;;
           esac
           
-      - name: Apply SUSFS Patches for KernelSU Variants
-        run: |
-          echo "Changing to configuration directory: $CONFIG..."
-          cd "$CONFIG"
-          
-          echo "Applying SUSFS patches..."
-          
-          # Copy SUSFS patches
-          
-          case "${{ inputs.kernelsu_variant }}" in
-            "KSU" | "WILD")
-              echo "Applying SUSFS patches for Official KernelSU..."
-              cd ./KernelSU
-              cp ../../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./
-              patch -p1 --forward --fuzz=3 < 10_enable_susfs_for_ksu.patch
-              ;;
-            "NEXT")
-              echo "Applying SUSFS patches for KernelSU Next..."
-              cd ./KernelSU-Next
-              cp ../../kernel_patches/next/kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch ./
-              patch -p1 --forward --fuzz=3 < kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch
-              ;;
-            "MKSU")
-              echo "Applying SUSFS patches for MKSU..."
-              cd ./KernelSU
-              cp ../../kernel_patches/next/kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch ./
-              patch -p1 --forward --fuzz=3 < kernel-patch-susfs-v1.5.7-to-KernelSU-Next.patch
-              ;;
-          esac
-
-          cd ../common
-          patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch || true
-
       - name: Apply Hooks Patches
         run: |
           echo "Changing to configuration directory: $CONFIG..."
